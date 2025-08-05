@@ -1,6 +1,12 @@
 # 🎵 Songs API - Backend Engineer Assignment
 
 A comprehensive REST API for managing and serving song data with advanced features including Redis caching, Docker deployment, and a modern web dashboard.
+<img width="1302" height="735" alt="image" src="https://github.com/user-attachments/assets/7c0c4097-ea91-4275-8f5c-8ff624457d00" />
+<img width="1298" height="752" alt="image" src="https://github.com/user-attachments/assets/3d41a368-e9d0-491d-a8bd-6253e936f722" />
+<img width="1307" height="739" alt="image" src="https://github.com/user-attachments/assets/2b793937-d8c1-4534-915a-958c24c0a139" />
+
+
+
 
 ## 📋 Table of Contents
 
