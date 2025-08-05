@@ -1,0 +1,700 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Songs API - Professional Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">
+                <i class="fas fa-music"></i>
+                Songs API Dashboard
+            </h1>
+            <nav class="nav">
+                <a href="#dashboard" class="nav-link active">Dashboard</a>
+                <a href="#api-docs" class="nav-link">API Docs</a>
+
+                <a href="/admin/" class="nav-link">Admin</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="dashboard">
+            <div class="container">
+                <div class="dashboard-header">
+                    <h2>API Performance Dashboard</h2>
+                    <p>Real-time monitoring and testing of Songs API endpoints</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-songs">Loading...</h3>
+                            <p>Total Songs</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="avg-rating">Loading...</h3>
+                            <p>Average Rating</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-play"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-plays">Loading...</h3>
+                            <p>Total Plays</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="api-response-time">Loading...</h3>
+                            <p>Avg Response Time</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API Testing Interface -->
+                <div class="api-testing-section">
+                    <h3>Interactive API Testing</h3>
+                    <div class="testing-grid">
+                        <!-- Search Testing -->
+                        <div class="test-card">
+                            <h4><i class="fas fa-search"></i> Search API</h4>
+                            <div class="test-form">
+                                <input type="text" id="search-query" placeholder="Enter search term..." value="Queen">
+                                <button onclick="testSearch()" class="btn btn-primary">Test Search</button>
+                            </div>
+                            <div class="test-result" id="search-result">
+                                <div class="result-header">
+                                    <span class="endpoint">GET /api/songs/search/?q=query</span>
+                                    <span class="status" id="search-status">Ready</span>
+                                </div>
+                                <pre class="result-content" id="search-content">Click "Test Search" to see results</pre>
+                            </div>
+                        </div>
+
+                        <!-- Top Rated Testing -->
+                        <div class="test-card">
+                            <h4><i class="fas fa-trophy"></i> Top Rated API</h4>
+                            <div class="test-form">
+                                <button onclick="testTopRated()" class="btn btn-primary">Get Top Rated</button>
+                            </div>
+                            <div class="test-result" id="top-rated-result">
+                                <div class="result-header">
+                                    <span class="endpoint">GET /api/songs/top_rated/</span>
+                                    <span class="status" id="top-rated-status">Ready</span>
+                                </div>
+                                <pre class="result-content" id="top-rated-content">Click "Get Top Rated" to see results</pre>
+                            </div>
+                        </div>
+
+                        <!-- Most Played Testing -->
+                        <div class="test-card">
+                            <h4><i class="fas fa-chart-line"></i> Most Played API</h4>
+                            <div class="test-form">
+                                <button onclick="testMostPlayed()" class="btn btn-primary">Get Most Played</button>
+                            </div>
+                            <div class="test-result" id="most-played-result">
+                                <div class="result-header">
+                                    <span class="endpoint">GET /api/songs/most_played/</span>
+                                    <span class="status" id="most-played-status">Ready</span>
+                                </div>
+                                <pre class="result-content" id="most-played-content">Click "Get Most Played" to see results</pre>
+                            </div>
+                        </div>
+
+                        <!-- Play Count Testing -->
+                        <div class="test-card">
+                            <h4><i class="fas fa-play-circle"></i> Play Count API</h4>
+                            <div class="test-form">
+                                <select id="play-song-select">
+                                    <option value="">Select a song...</option>
+                                </select>
+                                <button onclick="testPlaySong()" class="btn btn-primary">Increment Play</button>
+                            </div>
+                            <div class="test-result" id="play-result">
+                                <div class="result-header">
+                                    <span class="endpoint">POST /api/songs/{id}/play/</span>
+                                    <span class="status" id="play-status">Ready</span>
+                                </div>
+                                <pre class="result-content" id="play-content">Select a song and click "Increment Play"</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Data Display -->
+                <div class="live-data-section">
+                    <h3>Live API Data</h3>
+                    <div class="data-tabs">
+                        <button class="tab-btn active" onclick="switchTab('all-songs')">All Songs</button>
+                        <button class="tab-btn" onclick="switchTab('top-rated')">Top Rated</button>
+                        <button class="tab-btn" onclick="switchTab('most-played')">Most Played</button>
+        
+                    </div>
+                    <div id="frontend-status" style="margin: 10px 0; padding: 10px; background-color: #f0f0f0; border-radius: 5px; display: none;">
+                        <strong>Frontend Status:</strong> <span id="status-text">Initializing...</span>
+                    </div>
+                    <div class="data-content">
+                        <div id="all-songs" class="tab-content active">
+                            <div class="songs-grid" id="songs-grid">
+                                <!-- Songs will be loaded here -->
+                            </div>
+                        </div>
+                        <div id="top-rated" class="tab-content">
+                            <div class="songs-grid" id="top-rated-grid">
+                                <!-- Top rated songs will be loaded here -->
+                            </div>
+                        </div>
+                        <div id="most-played" class="tab-content">
+                            <div class="songs-grid" id="most-played-grid">
+                                <!-- Most played songs will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- API Documentation Section -->
+        <section id="api-docs" class="api-docs">
+            <div class="container">
+                <h2>API Documentation</h2>
+                <div class="endpoints-grid">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method get">GET</span>
+                            <code>/api/songs/</code>
+                        </div>
+                        <p>Retrieve all songs with pagination, filtering, and ordering</p>
+                        <div class="endpoint-details">
+                            <strong>Query Parameters:</strong>
+                            <ul>
+                                <li><code>page</code> - Page number</li>
+                                <li><code>search</code> - Search term</li>
+                                <li><code>genre</code> - Filter by genre</li>
+                                <li><code>year</code> - Filter by year</li>
+                                <li><code>ordering</code> - Sort by field</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method post">POST</span>
+                            <code>/api/songs/</code>
+                        </div>
+                        <p>Create a new song</p>
+                        <div class="endpoint-details">
+                            <strong>Required Fields:</strong>
+                            <ul>
+                                <li><code>title</code> - Song title</li>
+                                <li><code>artist</code> - Artist name</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method get">GET</span>
+                            <code>/api/songs/search/?q=query</code>
+                        </div>
+                        <p>Search songs by title, artist, album, or lyrics</p>
+                        <div class="endpoint-details">
+                            <strong>Parameters:</strong>
+                            <ul>
+                                <li><code>q</code> - Search query (required)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method get">GET</span>
+                            <code>/api/songs/top_rated/</code>
+                        </div>
+                        <p>Get songs sorted by rating (highest first)</p>
+                    </div>
+
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method get">GET</span>
+                            <code>/api/songs/most_played/</code>
+                        </div>
+                        <p>Get songs sorted by play count (highest first)</p>
+                    </div>
+
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method post">POST</span>
+                            <code>/api/songs/{id}/play/</code>
+                        </div>
+                        <p>Increment play count for a song</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Songs API Dashboard. Built with Django & Django REST Framework.</p>
+            <div class="footer-links">
+                <a href="/admin/">Admin Panel</a>
+                <a href="https://github.com" target="_blank">GitHub</a>
+                <a href="mailto:admin@songsapi.com">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Inline JavaScript for Songs API Dashboard
+        // This works without external static files
+        
+        class SongsAPIDashboard {
+            constructor() {
+                console.log('🎵 Initializing Songs API Dashboard...');
+                this.baseURL = '/api/songs/';
+                this.init();
+            }
+
+            init() {
+                console.log('🚀 Starting dashboard initialization...');
+                
+                // Show status
+                this.updateStatus('Initializing...', 'info');
+                
+                // Add a small delay to ensure DOM is ready
+                setTimeout(() => {
+                    try {
+                        this.loadDashboardStats();
+                        this.loadSongsData();
+                        this.populateSongSelect();
+                        console.log('✅ Dashboard initialization complete');
+                        this.updateStatus('Dashboard ready!', 'success');
+                    } catch (error) {
+                        console.error('❌ Error during initialization:', error);
+                        this.updateStatus('Error during initialization', 'error');
+                    }
+                }, 100);
+            }
+
+            updateStatus(message, type) {
+                const statusDiv = document.getElementById('frontend-status');
+                const statusText = document.getElementById('status-text');
+                if (statusDiv && statusText) {
+                    statusDiv.style.display = 'block';
+                    statusText.textContent = message;
+                    statusDiv.style.backgroundColor = type === 'success' ? '#d4edda' : 
+                                                    type === 'error' ? '#f8d7da' : '#d1ecf1';
+                }
+            }
+
+            async loadDashboardStats() {
+                console.log('📊 Loading dashboard statistics...');
+                try {
+                    const startTime = performance.now();
+                    console.log(`🔗 Fetching stats from: ${this.baseURL}`);
+                    
+                    // Fetch all songs to calculate total plays
+                    const allSongs = await this.fetchAllSongs();
+                    const endTime = performance.now();
+                    const responseTime = endTime - startTime;
+                    
+                    console.log(`📡 API Response Status: 200`);
+                    console.log(`⏱️ Response Time: ${responseTime.toFixed(2)}ms`);
+                    console.log(`📈 Received data: ${allSongs.length} songs`);
+                    
+                    this.updateStats(allSongs, responseTime);
+                } catch (error) {
+                    console.error('❌ Error loading dashboard stats:', error);
+                }
+            }
+
+            async fetchAllSongs() {
+                console.log('🔗 Fetching all songs for statistics...');
+                const allSongs = [];
+                let nextPage = this.baseURL;
+                
+                while (nextPage) {
+                    try {
+                        // Fix port mismatch - replace port 5000 with 8000
+                        const fixedUrl = nextPage.replace('localhost:5000', 'localhost:8000');
+                        console.log(`📄 Fetching: ${fixedUrl}`);
+                        
+                        const response = await fetch(fixedUrl);
+                        if (response.ok) {
+                            const data = await response.json();
+                            allSongs.push(...data.results);
+                            nextPage = data.next;
+                            console.log(`📄 Fetched page with ${data.results.length} songs, total so far: ${allSongs.length}`);
+                        } else {
+                            console.error(`❌ Error fetching page: ${response.status}`);
+                            break;
+                        }
+                    } catch (error) {
+                        console.error('❌ Error fetching songs:', error);
+                        break;
+                    }
+                }
+                
+                console.log(`✅ Fetched all ${allSongs.length} songs`);
+                return allSongs;
+            }
+
+            updateStats(allSongs, responseTime) {
+                console.log('📊 Updating dashboard statistics...');
+                
+                // Update total songs
+                const totalSongs = allSongs.length;
+                console.log(`🎵 Total Songs: ${totalSongs}`);
+                document.getElementById('total-songs').textContent = totalSongs;
+                
+                // Calculate average rating
+                if (allSongs.length > 0) {
+                    const ratings = [];
+                    for (const song of allSongs) {
+                        const rating = song.rating;
+                        if (rating !== null && rating !== undefined) {
+                            try {
+                                ratings.push(parseFloat(rating));
+                            } catch (e) {
+                                // Skip invalid ratings
+                            }
+                        }
+                    }
+                    
+                    const avgRating = ratings.length > 0 
+                        ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(2)
+                        : '0.00';
+                    
+                    console.log(`⭐ Average Rating: ${avgRating} (from ${ratings.length} songs)`);
+                    document.getElementById('avg-rating').textContent = avgRating;
+                    
+                    // Calculate total plays from all songs
+                    const totalPlays = allSongs
+                        .reduce((sum, song) => sum + (song.play_count || 0), 0);
+                    console.log(`🎧 Total Plays: ${totalPlays}`);
+                    document.getElementById('total-plays').textContent = totalPlays;
+                }
+                
+                // Update response time
+                console.log(`⚡ API Response Time: ${responseTime.toFixed(2)}ms`);
+                document.getElementById('api-response-time').textContent = `${responseTime.toFixed(2)}ms`;
+                
+                console.log('✅ Dashboard statistics updated successfully');
+            }
+
+            async loadSongsData() {
+                console.log('🎵 Loading songs data for display...');
+                try {
+                    console.log('🔄 Fetching all songs data...');
+                    const [allSongs, topRated, mostPlayed] = await Promise.all([
+                        this.fetchSongs(),
+                        this.fetchTopRated(),
+                        this.fetchMostPlayed()
+                    ]);
+
+                    console.log('📊 Displaying songs data...');
+                    this.displaySongs(allSongs, 'songs-grid');
+                    this.displaySongs(topRated, 'top-rated-grid');
+                    this.displaySongs(mostPlayed, 'most-played-grid');
+                    
+                    console.log('✅ Songs data loaded and displayed successfully');
+                } catch (error) {
+                    console.error('❌ Error loading songs data:', error);
+                }
+            }
+
+            async fetchSongs() {
+                console.log('🔗 Fetching all songs...');
+                const response = await fetch(this.baseURL);
+                const data = await response.json();
+                console.log(`📈 All songs fetched: ${data.count || 0} songs`);
+                return data;
+            }
+
+            async fetchTopRated() {
+                console.log('🔗 Fetching top rated songs...');
+                const response = await fetch(`${this.baseURL}top_rated/`);
+                const data = await response.json();
+                console.log(`🏆 Top rated songs fetched: ${data.count || 0} songs`);
+                return data;
+            }
+
+            async fetchMostPlayed() {
+                console.log('🔗 Fetching most played songs...');
+                const response = await fetch(`${this.baseURL}most_played/`);
+                const data = await response.json();
+                console.log(`🎧 Most played songs fetched: ${data.count || 0} songs`);
+                return data;
+            }
+
+            displaySongs(data, containerId) {
+                console.log(`🎨 Displaying songs in container: ${containerId}`);
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    console.error(`❌ Container not found: ${containerId}`);
+                    return;
+                }
+
+                container.innerHTML = '';
+                
+                if (data.results && data.results.length > 0) {
+                    console.log(`📝 Creating ${data.results.length} song cards...`);
+                    data.results.forEach((song, index) => {
+                        try {
+                            const songCard = this.createSongCard(song);
+                            container.appendChild(songCard);
+                            console.log(`✅ Song card ${index + 1} created: ${song.title}`);
+                        } catch (error) {
+                            console.error(`❌ Error creating song card ${index}:`, error);
+                        }
+                    });
+                } else {
+                    console.log('⚠️ No songs found to display');
+                    container.innerHTML = '<p class="no-data">No songs found</p>';
+                }
+                
+                // Force a reflow to ensure elements are visible
+                container.style.display = 'none';
+                container.offsetHeight; // Trigger reflow
+                container.style.display = 'grid';
+            }
+
+            createSongCard(song) {
+                const card = document.createElement('div');
+                card.className = 'song-card';
+                card.innerHTML = `
+                    <div class="song-header">
+                        <h4>${song.title}</h4>
+                        <span class="artist">${song.artist}</span>
+                    </div>
+                    <div class="song-details">
+                        <div class="detail-row">
+                            <span class="label">Rating:</span>
+                            <span class="value">${song.rating || 'N/A'} ⭐</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Plays:</span>
+                            <span class="value">${song.play_count || 0} 🎧</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Duration:</span>
+                            <span class="value">${song.duration || 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Genre:</span>
+                            <span class="value">${song.genre || 'N/A'}</span>
+                        </div>
+                    </div>
+                `;
+                return card;
+            }
+
+            async populateSongSelect() {
+                console.log('🎵 Populating song select dropdown...');
+                try {
+                    const response = await fetch(this.baseURL);
+                    const data = await response.json();
+                    
+                    const select = document.getElementById('play-song-select');
+                    if (!select) {
+                        console.error('❌ Song select dropdown not found');
+                        return;
+                    }
+
+                    // Clear existing options except the first one
+                    select.innerHTML = '<option value="">Select a song...</option>';
+                    
+                    if (data.results && data.results.length > 0) {
+                        console.log(`📝 Adding ${data.results.length} songs to dropdown...`);
+                        data.results.forEach(song => {
+                            const option = document.createElement('option');
+                            option.value = song.id;
+                            option.textContent = `${song.title} - ${song.artist}`;
+                            select.appendChild(option);
+                        });
+                        console.log('✅ Song dropdown populated successfully');
+                    } else {
+                        console.log('⚠️ No songs found for dropdown');
+                    }
+                } catch (error) {
+                    console.error('❌ Error populating song select:', error);
+                }
+            }
+        }
+
+        // Global functions for HTML onclick handlers
+        function testSearch() {
+            console.log('🔍 Global testSearch function called');
+            const query = document.getElementById('search-query').value;
+            const resultElement = document.getElementById('search-content');
+            const statusElement = document.getElementById('search-status');
+            
+            statusElement.textContent = 'Loading...';
+            statusElement.className = 'status loading';
+            
+            fetch(`/api/songs/search/?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    statusElement.textContent = 'Success';
+                    statusElement.className = 'status success';
+                    resultElement.textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    statusElement.textContent = 'Error';
+                    statusElement.className = 'status error';
+                    resultElement.textContent = `Error: ${error.message}`;
+                });
+        }
+
+        function testTopRated() {
+            console.log('🏆 Global testTopRated function called');
+            const resultElement = document.getElementById('top-rated-content');
+            const statusElement = document.getElementById('top-rated-status');
+            
+            statusElement.textContent = 'Loading...';
+            statusElement.className = 'status loading';
+            
+            fetch('/api/songs/top_rated/')
+                .then(response => response.json())
+                .then(data => {
+                    statusElement.textContent = 'Success';
+                    statusElement.className = 'status success';
+                    resultElement.textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    statusElement.textContent = 'Error';
+                    statusElement.className = 'status error';
+                    resultElement.textContent = `Error: ${error.message}`;
+                });
+        }
+
+        function testMostPlayed() {
+            console.log('🎧 Global testMostPlayed function called');
+            const resultElement = document.getElementById('most-played-content');
+            const statusElement = document.getElementById('most-played-status');
+            
+            statusElement.textContent = 'Loading...';
+            statusElement.className = 'status loading';
+            
+            fetch('/api/songs/most_played/')
+                .then(response => response.json())
+                .then(data => {
+                    statusElement.textContent = 'Success';
+                    statusElement.className = 'status success';
+                    resultElement.textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    statusElement.textContent = 'Error';
+                    statusElement.className = 'status error';
+                    resultElement.textContent = `Error: ${error.message}`;
+                });
+        }
+
+        function testPlaySong() {
+            console.log('▶️ Global testPlaySong function called');
+            const songId = document.getElementById('play-song-select').value;
+            const resultElement = document.getElementById('play-content');
+            const statusElement = document.getElementById('play-status');
+            
+            if (!songId) {
+                resultElement.textContent = 'Please select a song first';
+                return;
+            }
+            
+            statusElement.textContent = 'Loading...';
+            statusElement.className = 'status loading';
+            
+            fetch(`/api/songs/${songId}/play/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                statusElement.textContent = 'Success';
+                statusElement.className = 'status success';
+                resultElement.textContent = JSON.stringify(data, null, 2);
+                // Refresh dashboard stats after playing
+                if (window.dashboard) {
+                    window.dashboard.loadDashboardStats();
+                }
+            })
+            .catch(error => {
+                statusElement.textContent = 'Error';
+                statusElement.className = 'status error';
+                resultElement.textContent = `Error: ${error.message}`;
+            });
+        }
+
+        function switchTab(tabName) {
+            console.log(`📑 Switching to tab: ${tabName}`);
+            // Remove active class from all tabs and content
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab and content
+            const targetTab = document.querySelector(`[onclick="switchTab('${tabName}')"]`);
+            const targetContent = document.getElementById(tabName);
+            
+            if (targetTab) targetTab.classList.add('active');
+            if (targetContent) targetContent.classList.add('active');
+            
+            console.log(`✅ Tab switched to: ${tabName}`);
+        }
+
+
+
+
+
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Page loaded, initializing dashboard...');
+            try {
+                window.dashboard = new SongsAPIDashboard();
+                console.log('✅ Dashboard initialized successfully');
+                
+                // Test if elements exist
+                const dropdown = document.getElementById('play-song-select');
+                const songsGrid = document.getElementById('songs-grid');
+                const mostPlayedGrid = document.getElementById('most-played-grid');
+                
+                console.log('🔍 Element check:', {
+                    dropdown: !!dropdown,
+                    songsGrid: !!songsGrid,
+                    mostPlayedGrid: !!mostPlayedGrid
+                });
+                
+            } catch (error) {
+                console.error('❌ Error initializing dashboard:', error);
+            }
+        });
+    </script>
+</body>
+</html> 
